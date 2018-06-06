@@ -1,45 +1,227 @@
 // colors
-$bg-color: #fff;
-$logo-color: #000;
+$body-color: #23272f;
+$galaxys8-color: #a3c5e8;
+$galaxys8-color-dark: darken($galaxys8-color, 20%);
+$galaxys8-color-light: lighten($galaxys8-color, 10%);
+$galaxys8-bazzel-color: #222;
+$galaxys8-edge-color: rgba(255,255,255, 0.5);
+$galaxys8-sensor-color: #666;
 
-// mixins
-@mixin center {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    margin: auto;
+// sizes
+  $galaxys8-height: 686px;
+  $galaxys8-width: 316px;
+  $body-padding: 5%;
+  // bazzel
+  $bazzel-border-width: 4px;
+  $bazzel-shadow-width: 2px;
+  $bazzel-top-bottom-padding: 35px;
+  $bazzel-left-right-padding: 4px;
+  $bazzel-border-radius: 46px;
+  // header
+  $header-height: 40px;
+  $header-width: 190px;
+  $header-margin-left: -95px;
+  $header-margin-top: 6px;
+  // line
+  $line-height: 4px;
+  $line-width: 5px;
+  $line-margin: 40px;
+  // screen
+  $screen-height: $galaxys8-height - ($bazzel-top-bottom-padding - $bazzel-border-width) - $header-height;
+  $screen-width: $galaxys8-width - $bazzel-border-width - $bazzel-left-right-padding;
+  $screen-border-width: 2px;
+  $screen-border-radius: 28px;
+  // edge
+  $edge-margin-top: ($screen-height + $header-height) - $screen-border-width - $line-height - 1;
+  $edge-margin: ($bazzel-left-right-padding * 2);
+  $edge-height: $galaxys8-height - ($bazzel-border-width * 2) - $bazzel-left-right-padding;
+  $edge-width: $screen-width - $edge-margin - ($bazzel-left-right-padding * 2);
+  // volume button
+  $volume-button-height: 98px;
+  $volume-button-width: 3px;
+  // power button
+  $power-button-height: 46px;
+  $power-button-width: 3px;
+// end sizes
+
+// images
+$star-bg: "http://www.script-tutorials.com/demos/360/images/stars.png";
+$screen-bg: "http://media.idownloadblog.com/wp-content/uploads/2017/04/samsung_galaxy_s8_qhd_droidviews_16.jpg";
+
+// mixin
+@mixin center{
+  display: flex;
+  justify-content: center;
 }
-
-@mixin pseudo($position: absolute, $content: "") {
+@mixin pseudo($position: absolute, $content: ""){
     content: $content;
     position: $position;
 }
-
-@mixin breakpoint($point) {
-    @if $point==tablet {
-        @media (max-width: 1024px) and (min-width: 768px) {
-            @content ;
-        }
+@mixin reset{
+  *{
+    &,
+    &::before,
+    &::after {
+      box-sizing: border-box;
+      display: block;
     }
-    @else if $point==mobile {
-        @media (max-width: 480px) and (min-width: 320px) {
-            @content ;
-        }
-    }
+  }
+  z-index: 1;
+  position: relative;
+}
+@mixin full-screen{
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  position:absolute;
 }
 
-html, body{
-  width: 100%;
-  height: 100%;
-}
+/*------------------------------------------------*/
 
 body{
-  background: $bg-color;
-  overflow: hidden;
+  @include center;
+  padding: $body-padding;
+  background: $body-color;
 }
 
-.logo{
-  @include center;
+.stars {
+  @include full-screen;
+  background:url($star-bg) repeat top center;
+}
+
+.galaxy-s8 {
+  @include reset;
+
+  height: $galaxys8-height;
+  width: $galaxys8-width;
+
+  .bazzel {
+    height: $galaxys8-height;
+    width: $galaxys8-width;
+    background: $galaxys8-bazzel-color;
+    border: solid $galaxys8-color;
+    border-radius: $bazzel-border-radius;
+    border-width: $bazzel-border-width 0;
+    box-shadow: inset 0 0 0 $bazzel-shadow-width $galaxys8-color-dark;
+    padding: $bazzel-top-bottom-padding $bazzel-left-right-padding;
+  }
+
+  .screen {
+    height: $screen-height;
+    width: $screen-width;
+    position: relative;
+    background: url($screen-bg) no-repeat;
+    background-position: center center;
+    background-size: cover;
+    border-radius: $screen-border-radius;
+    border: $screen-border-width solid $galaxys8-bazzel-color;
+  }
+
+  .edge{
+    height: $edge-height;
+    width: $edge-width;
+    position: relative;
+    background: transparent;
+    margin-left: $edge-margin;
+    margin-top: -$edge-margin-top;
+    border-radius: $screen-border-radius;
+    box-shadow: 12px 0 15px -4px $galaxys8-edge-color, -12px 0 8px -4px $galaxys8-edge-color;
+  }
+
+  .line {
+    &::after,
+    &::before {
+      @include pseudo;
+      height: $galaxys8-height;
+      width: $line-width;
+      top: 0;
+      z-index: 9;
+      border: solid $galaxys8-color-light;
+      border-width: $line-height 0;
+    }
+    &::after {
+      left: $line-margin;
+    }
+    &::before {
+      right: $line-margin;
+    }
+  }
+
+  .header {
+    height: $header-height;
+    width: $header-width;
+    position: absolute;
+    left: 50%;
+    top: $header-margin-top;
+    z-index: 199;
+    margin-left: $header-margin-left;
+
+    // sensor at center
+    &::after {
+      @include pseudo;
+      height: 4px;
+      width: 40px;
+      left: 50%;
+      top: 50%;
+      margin-left: -20px;
+      margin-top: -2px;
+      border-radius: 2.5px;
+      background: $galaxys8-sensor-color;
+    }
+  }
+
+  // circle sensor
+  .sensors {
+    &::after,
+    &::before {
+      @include pseudo;
+      top: 50%;
+      background: $galaxys8-sensor-color;
+      border-radius: 50%;
+    }
+    &::after {
+      height: 6px;
+      width: 6px;
+      right: 0;
+      margin-top: -3px;
+    }
+    &::before {
+      height: 10px;
+      width: 10px;
+      left: 0;
+      margin-top: -5px;
+      box-shadow: 155px 0 $galaxys8-sensor-color;
+    }
+  }
+
+  .volume-button {
+    height: $volume-button-height;
+    width: $volume-button-width;
+    position: absolute;
+    top: 120px;
+    left: -2px;
+    border-radius: 2px 0 0 2px;
+    background: $galaxys8-color-dark;
+
+    &::after {
+      @include pseudo;
+      height: 45px;
+      width: 3px;
+      left: 0;
+      top: 138px;
+      border-radius: 2px 0 0 2px;
+      background: $galaxys8-color-dark;
+    }
+  }
+
+  .power-button {
+    height: $power-button-height;
+    width: $power-button-width;
+    position: absolute;
+    top: 218px;
+    right: -2px;
+    border-radius: 0 2px 2px 0;
+    background: $galaxys8-color-dark;
+  }
 }
